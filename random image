@@ -1,0 +1,155 @@
+import functools
+import numpy as py
+import PIL
+
+def semirandom_array(n):
+	span = 255
+	
+	b = 0
+	
+	r = py.empty(n, dtype = int)
+	for a in range(n):
+		if b > span:
+			b = 0
+		r[a] = b
+		b = b + 1
+	return r
+
+def length8_binarray(n):
+	r= py.empty(n)
+	b = True
+	for a in range(n):
+		if b:
+			r[a] = 00000000
+			b = False
+		else:
+			r[a] = 11111111
+			b = True
+	return r
+
+def creates_ascending_bin_list(n):
+	r = py.empty(n)
+	span = 255
+	b = -1
+
+	for a in range(n):
+		b = b + 1
+		if b > span:
+			b = 0
+		r[a] = (str((8-len(str(bin(b)[2:])))*"0")+str(bin(b)[2:]))
+	return r
+	
+
+
+
+
+
+n = 3000000
+r_bin = length8_binarray(n) #generates the random data
+
+r_sort = py.empty((n*3/2),dtype=tuple) #should have len()==4500000
+
+
+
+k=0
+for c in range(n):
+	if (k<=(n*3/2-3)):
+		r_sort[k] = str((r_bin[c]))[:4]
+		r_sort[k+1] = str((r_bin[c]))[5:]+str((r_bin[c+1]))[:2]      #Might need to change
+		r_sort[k+2] = str((r_bin[c+1]))[3:]
+		c = c + 1
+		k = k + 3
+
+
+
+
+img = Image.new( 'RGB', (2000,1500), "black") # create a new black image
+pixels = img.load() # create the pixel map
+k=0
+s = 0
+r_sort_zero = 0 
+for x in range(img.size[0]):    # for every pixel:
+	for y in range(img.size[1]):
+		if (k>len(r_sort)):
+			break
+		try:
+			if r_sort[k] =='0.0':
+				pixels[x,y] = (r_sort_zero, int(r_sort[k+1]), int(r_sort[k+2])) # set the colour accordingly
+			elif r_sort[k+1] == '0.0':
+				pixels[x,y] = (int(r_sort[k]), r_sort_zero, int(r_sort[k+2])) # set the colour accordingly
+			elif r_sort[k+2] == '0.0':
+				pixels[x,y] = (int(r_sort[k]), int(r_sort[k+1]), r_sort_zero) # set the colour accordingly
+			else:
+				pixels[x,y] = (int(r_sort[k]), int(r_sort[k+1]), int(r_sort[k+2])) # set the colour accordingly
+				s = s + 1
+					
+		except ValueError:
+			if r_sort[k] =='0.0':
+				print str(k) + ' pos'
+		except IndexError:
+			print str(k) + ' out of bounds'
+
+
+
+
+		if (k<=(len(r_sort)-3)):
+				k = k + 3
+		else:
+			print 'donezo'
+			print k
+			print s
+			break
+
+
+img.save("example.png")
+
+
+
+
+# for x in range(img.size[0]):    # for every pixel:
+#     for y in range(img.size[1]):
+#     	try:
+#         	pixels[x,y] = (int(r_sort[k]), int(r_sort[k+1]), int(r_sort[k+2])) # set the colour accordingly
+#         except ValueError:
+#         	for a in [0,1,2]:
+#         		if r_sort[k+a]=='0.0':
+#         			r_sort[k+a] = 0
+#         		else:
+#         			r_sort[k+a] = int(r_sort[k+a])
+#         	pixels[x,y] = (r_sort[k], r_sort[k+1], r_sort[k+2]) # set the colour accordingly
+#         	print 'gotem'
+
+#         if (k<=(len(r_sort)-3)):
+#         	k = k + 3
+#         else:
+#         	print k
+#         	break
+
+
+
+
+
+
+
+
+#(k<=(len(r_sort)-3))
+
+
+# print r_bin[230]
+
+# print str((r_bin[230]))[:5]
+# print str((r_bin[230]))[6:11]
+# print str((r_bin[230]))[12:16]
+
+
+
+
+
+
+
+
+
+
+
+
+
